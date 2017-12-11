@@ -37,6 +37,9 @@ class Ui_HomeWindow(object):
         self.DeviceList = QtGui.QListView(self.widget)
         self.DeviceList.setGeometry(QtCore.QRect(60, 51, 361, 311))
         self.DeviceList.setObjectName(_fromUtf8("DeviceList"))
+        self.label = QtGui.QLabel(self.widget)
+        self.label.setGeometry(QtCore.QRect(90, 30, 381, 16))
+        self.label.setObjectName(_fromUtf8("label"))
         HomeWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(HomeWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -48,4 +51,5 @@ class Ui_HomeWindow(object):
     def retranslateUi(self, HomeWindow):
         HomeWindow.setWindowTitle(_translate("HomeWindow", "packet sniffer", None))
         self.select.setText(_translate("HomeWindow", "select", None))
+        self.label.setText(_translate("HomeWindow", "please select interface to start sniffing", None))
 
