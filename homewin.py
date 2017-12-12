@@ -34,12 +34,12 @@ class Ui_HomeWindow(object):
         self.select = QtGui.QPushButton(self.widget)
         self.select.setGeometry(QtCore.QRect(200, 380, 93, 27))
         self.select.setObjectName(_fromUtf8("select"))
-        self.DeviceList = QtGui.QListView(self.widget)
-        self.DeviceList.setGeometry(QtCore.QRect(60, 51, 361, 311))
-        self.DeviceList.setObjectName(_fromUtf8("DeviceList"))
         self.label = QtGui.QLabel(self.widget)
-        self.label.setGeometry(QtCore.QRect(90, 30, 381, 16))
+        self.label.setGeometry(QtCore.QRect(110, 50, 281, 16))
         self.label.setObjectName(_fromUtf8("label"))
+        self.DeviceList = QtGui.QListWidget(self.widget)
+        self.DeviceList.setGeometry(QtCore.QRect(70, 80, 351, 251))
+        self.DeviceList.setObjectName(_fromUtf8("DeviceList"))
         HomeWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(HomeWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -52,4 +52,30 @@ class Ui_HomeWindow(object):
         HomeWindow.setWindowTitle(_translate("HomeWindow", "packet sniffer", None))
         self.select.setText(_translate("HomeWindow", "select", None))
         self.label.setText(_translate("HomeWindow", "please select interface to start sniffing", None))
+        __sortingEnabled = self.DeviceList.isSortingEnabled()
+        self.DeviceList.setSortingEnabled(False)
+        item = self.DeviceList.item(0)
+        self.DeviceList.setSortingEnabled(__sortingEnabled)
+def selectTrigger():
+    if(ui.DeviceList.currentRow()==-1):
+        msgBox = QtGui.QMessageBox()
+        msgBox.warning(ui.widget, "Alarm", "please select your target device to continue...")
+    else:
+        SelectedDevice=ui.DeviceList.currentItem().text()
+        nmsgBox = QtGui.QMessageBox()
+        nmsgBox.warning(ui.widget, "SelectedDevice:", SelectedDevice+"          ")
+        #here we would excute a new pyqt form 
+        sys.exit() 
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    HomeWindow = QtGui.QMainWindow()
+    ui = Ui_HomeWindow()
+    ui.setupUi(HomeWindow)
+    test=["test1","test2","test3"]                  #list of strings to test addItems() function
+    ui.DeviceList.addItems(test)                    #adds elemnts of the list(test) to QlistWidget
+    ui.select.clicked.connect(selectTrigger)        #when button (select) is been trigger it calls selectTrigger()
+    HomeWindow.show()
+    sys.exit(app.exec_())
 
