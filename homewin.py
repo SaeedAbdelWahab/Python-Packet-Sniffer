@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+from pcapy import findalldevs
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -73,9 +74,9 @@ if __name__ == "__main__":
     HomeWindow = QtGui.QMainWindow()
     ui = Ui_HomeWindow()
     ui.setupUi(HomeWindow)
-    test=["test1","test2","test3"]                  #list of strings to test addItems() function
-    ui.DeviceList.addItems(test)                    #adds elemnts of the list(test) to QlistWidget
-    ui.select.clicked.connect(selectTrigger)        #when button (select) is been trigger it calls selectTrigger()
+    devices = findalldevs()                  #list of strings to test addItems() function
+    ui.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
+    ui.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
     HomeWindow.show()
     sys.exit(app.exec_())
 
