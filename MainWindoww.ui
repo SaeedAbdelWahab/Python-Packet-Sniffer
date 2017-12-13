@@ -54,15 +54,10 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QTableWidget" name="PacketTable">
+     <widget class="QTreeWidget" name="PacketTable">
       <column>
        <property name="text">
         <string>Protocol</string>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
        </property>
       </column>
       <column>
@@ -72,7 +67,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Destination MAC</string>
+        <string>Destinatiin MAC</string>
        </property>
       </column>
       <column>
