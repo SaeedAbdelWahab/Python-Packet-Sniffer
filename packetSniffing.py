@@ -50,3 +50,26 @@ def PacketDest(pkts):
     #return packet[0][1].dst  #use return to print in column directly
 
 pDest = sniff(filter='udp',prn= PacketDest, count=10)
+
+
+##Middle Window
+##Function Returning Mac Src Address
+def MacPacketSrc(pkts):
+    global counter4
+    counter4 += 1
+    
+    for packet in pkts:
+        fetch_packets(packet)
+        yield
+    print( 'DestSrcAddress: {}'.format(packet[0][1].src) )
+
+MacSrc = sniff(filter='udp',prn= MacPacketSrc, count=10)
+
+##Function Returning Mac Dest Address
+def MacPacketDest(pkts):    
+    for packet in pkts:
+        fetch_packets(packet)
+        yield
+    print( 'DestMacAddress: {}'.format(packet[0][1].dst) )
+
+MacDst = sniff(filter='udp',prn= MacPacketDest, count=10)
