@@ -1,8 +1,13 @@
 from pcapy import findalldevs
-import os,sys
+import os,sys,pcapy
 from Windows.homewin import Ui_HomeWindow
 from Windows.MainWindow import Ui_MainWindow
 from PyQt4 import QtCore, QtGui
+import socket
+from struct import *
+import datetime
+import pcapy
+import sys
 
 
 def selectTrigger():
@@ -17,12 +22,41 @@ def selectTrigger():
         MainWindow.show()
 def statueStart():
     ui_main.statusBar.showMessage("Sniffing...")
+    sniffing = True
+    cap = pcapy.open_live("wlp8s0" , 65536 , 1 , 0)
+    
+    (header, packet) = cap.next()
+    parse_packet(packet)
+
+def eth_addr (a) :
+    b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(a[0]) , ord(a[1]) , ord(a[2]), ord(a[3]), ord(a[4]) , ord(a[5]))
+    return b
+
+def parse_packet(packet) :
+    eth_length = 14
+     
+    eth_header = packet[:eth_length]
+    eth = unpack('!6s6sH' , eth_header)
+    eth_protocol = socket.ntohs(eth[2])
+    rowPosition = ui_main.PacketTable.rowCount()
+    ui_main.PacketTable.insertRow(rowPosition)
+    ui_main.PacketTable.setItem(rowPosition,0,QtGui.QTableWidgetItem(str(eth_protocol)))
+    ui_main.PacketTable.setItem(rowPosition , 1, QtGui.QTableWidgetItem(eth_addr(packet[0:6])))
+    ui_main.PacketTable.setItem(rowPosition , 2, QtGui.QTableWidgetItem(eth_addr(packet[6:12])))
+    #ui_main.PacketTable.setItem(rowPosition , 3, QtGui.QTableWidgetItem(eth_protocol))
+    #sys.exit(1)
+
+
+
+
+    
 def statueStop():
+    sniffing = False
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
    
 
 
-
+sniffing = False
 app = QtGui.QApplication(sys.argv)
 HomeWindow = QtGui.QMainWindow()
 MainWindow = QtGui.QMainWindow()
