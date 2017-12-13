@@ -98,9 +98,3 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
         self.toolBar_2.setWindowTitle(_translate("MainWindow", "toolBar_2", None))
 
-app = QtGui.QApplication(sys.argv)
-MainWindow = QtGui.QMainWindow()
-ui = Ui_MainWindow()
-ui.setupUi(MainWindow)
-MainWindow.show()
-sys.exit(app.exec_())
