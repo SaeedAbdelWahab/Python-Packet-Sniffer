@@ -10,20 +10,21 @@ import pcapy
 import sys
 
 
+
 def selectTrigger():
     if(ui_home.DeviceList.currentRow()==-1):
         msgBox = QtGui.QMessageBox()
         msgBox.warning(ui_home.widget, "Alarm", "please select your target device to continue...")
     else:
+        global SelectedDevice
         SelectedDevice=ui_home.DeviceList.currentItem().text()
-        nmsgBox = QtGui.QMessageBox()
-        nmsgBox.warning(ui_home.widget, "SelectedDevice:", SelectedDevice+"          ")
         HomeWindow.close()
         MainWindow.show()
+
 def statueStart():
     ui_main.statusBar.showMessage("Sniffing...")
     sniffing = True
-    cap = pcapy.open_live("wlp8s0" , 65536 , 1 , 0)
+    cap = pcapy.open_live( str(SelectedDevice), 65536 , 1 , 0)
     
     (header, packet) = cap.next()
     parse_packet(packet)

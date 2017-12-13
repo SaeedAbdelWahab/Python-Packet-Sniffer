@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindoww.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(621, 571)
+        MainWindow.resize(779, 610)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
@@ -50,6 +50,12 @@ class Ui_MainWindow(object):
         self.PacketTable.setObjectName(_fromUtf8("PacketTable"))
         self.PacketTable.setColumnCount(5)
         self.PacketTable.setRowCount(0)
+        header = self.PacketTable.horizontalHeader()
+        header.setResizeMode(0, QtGui.QHeaderView.Stretch)
+        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
+        header.setResizeMode(2, QtGui.QHeaderView.Stretch)
+        header.setResizeMode(3, QtGui.QHeaderView.Stretch)
+        header.setResizeMode(4, QtGui.QHeaderView.Stretch)
         item = QtGui.QTableWidgetItem()
         font = QtGui.QFont()
         font.setPointSize(11)
