@@ -19,12 +19,6 @@ def main(argv):
     print "Sniffing device " + dev
      
     
-    #open device
-    # Arguments here are:
-    #   device
-    #   snaplen (maximum number of bytes to capture _per_packet_)
-    #   promiscious mode (1 for true)
-    #   timeout (in milliseconds) 
 
     cap = pcapy.open_live(dev , 65536 , 1 , 0)
  
@@ -94,8 +88,9 @@ def parse_packet(packet) :
              
             #get data from the packet
             data = packet[h_size:]
-             
-            print 'Data : ' + data
+            if (dest_port == 80 or source_port == 80) :
+                print 'Data : ' + data
+                
  
         #ICMP Packets
         elif protocol == 1 :
@@ -117,7 +112,7 @@ def parse_packet(packet) :
             #get data from the packet
             data = packet[h_size:]
              
-            print 'Data : ' + data
+            #print 'Data : ' + data
  
         #UDP packets
         elif protocol == 17 :
@@ -141,7 +136,7 @@ def parse_packet(packet) :
             #get data from the packet
             data = packet[h_size:]
              
-            print 'Data : ' + data
+            #print 'Data : ' + data
  
         #some other IP packet like IGMP
         else :
