@@ -4,6 +4,7 @@ from scapy.all import *
 ## Create a Packet Counter
 counter = 0
 counter2 = 0
+counter3 = 0
  
 ## Define our Custom Action function
 
@@ -37,3 +38,15 @@ pSrc = sniff(filter='udp',prn= PacketSrc, count=10)
 
 
 ##function printing destination IP Address: (to add it as a column in the main table)
+def PacketDest(pkts):
+    global counter3
+    counter3 += 1
+    
+    for packet in pkts:
+        fetch_packets(packet)
+
+    #print is used for testing    
+    print('Packet Dest #{}: {}'.format(counter3, packet[0][1].dst) )
+    #return packet[0][1].dst  #use return to print in column directly
+
+pDest = sniff(filter='udp',prn= PacketDest, count=10)
