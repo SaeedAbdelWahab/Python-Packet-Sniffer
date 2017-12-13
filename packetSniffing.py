@@ -6,7 +6,21 @@ counter = 0
 counter2 = 0
 counter3 = 0
  
-## Define our Custom Action function
+
+
+##Filter Function (not working with the output yet)
+def FilterBy(fltr):
+    filters = ["arp","ipv4","ipv6","tcp","udp","dhcp","http"]
+
+    if fltr in filters:
+        filtername = fltr
+        print(fltr)
+        return filtername
+    else:
+        print('Unrecognized filter')
+
+FilterBy('udp')
+## Define our Main Action function
 
 def fetch_packets(packet):
     global counter
@@ -55,9 +69,6 @@ pDest = sniff(filter='udp',prn= PacketDest, count=10)
 ##Middle Window
 ##Function Returning Mac Src Address
 def MacPacketSrc(pkts):
-    global counter4
-    counter4 += 1
-    
     for packet in pkts:
         fetch_packets(packet)
         yield
