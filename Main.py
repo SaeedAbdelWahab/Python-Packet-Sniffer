@@ -9,6 +9,7 @@ import datetime
 import pcapy
 import sys
 import time
+import threading
 
 Row=0
 try:
@@ -34,9 +35,13 @@ def statueStart():
     sniffing = True
     cap = pcapy.open_live( str(SelectedDevice), 65536 , 1 , 0)
     for i in range(10):
-        time.sleep(1)
+        time.sleep(0.2)
         (header, packet) = cap.next()
-        parse_packet(packet)
+        t = threading.Thread(target=parse_packet, args = (packet,))
+        t.daemon = True
+        t.start()
+        #t.join()
+        #parse_packet(packet)
     
 
 def eth_addr (a) :
