@@ -72,8 +72,12 @@ class Ui_MainWindow(object):
         self.statusBar.setObjectName(_fromUtf8("statusBar"))
         self.statusBar.showMessage("(ready)")        
         MainWindow.setStatusBar(self.statusBar)
-        self.toolBar.addSeparator()
-
+        self.actionAbout_us = QtGui.QAction(MainWindow)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("Windows/about.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionAbout_us.setIcon(icon)
+        self.actionAbout_us.setObjectName(_fromUtf8("actionAbout_us"))
+        self.toolBar.addAction(self.actionAbout_us)
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.Exit, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -98,4 +102,7 @@ class Ui_MainWindow(object):
         item = self.PacketTable.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Info", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
+        self.actionAbout_us.setText(_translate("MainWindow", "about us", None))
+        self.actionAbout_us.setToolTip(_translate("MainWindow", "<html><head/><body><p>about us</p></body></html>", None))
+
 

@@ -100,12 +100,25 @@
     <bool>false</bool>
    </attribute>
    <addaction name="separator"/>
+   <addaction name="actionAbout_us"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="statusTip">
     <string/>
    </property>
   </widget>
+  <action name="actionAbout_us">
+   <property name="icon">
+    <iconset>
+     <normaloff>Windows/about.png</normaloff>Windows/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>about us</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;about us&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
