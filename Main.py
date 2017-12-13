@@ -15,7 +15,11 @@ def selectTrigger():
         nmsgBox.warning(ui_home.widget, "SelectedDevice:", SelectedDevice+"          ")
         HomeWindow.close()
         MainWindow.show()
-        
+def statueStart():
+    ui_main.statusBar.showMessage("Sniffing...")
+def statueStop():
+    ui_main.statusBar.showMessage("Sniffing has been stopped.")
+   
 
 
 
@@ -28,10 +32,12 @@ ui_home.setupUi(HomeWindow)
 ui_main.setupUi(MainWindow)
 if os.getuid()!=0 :
     msgBox = QtGui.QMessageBox()
-    msgBox.warning(ui.widget, "not sudo", "please re-execute the app in admin(root) mode...")
+    msgBox.warning(ui_home.widget, "not sudo", "please re-execute the app in admin(root) mode...")
     sys.exit()
 devices = findalldevs()                  #list of strings to test addItems() function
 ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
+ui_main.StartButton.clicked.connect(statueStart)
+ui_main.StopSniffing.clicked.connect(statueStop)
 HomeWindow.show()
 sys.exit(app.exec_())

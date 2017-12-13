@@ -7,7 +7,6 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-import sys
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -68,12 +67,15 @@ class Ui_MainWindow(object):
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.toolBar_2 = QtGui.QToolBar(MainWindow)
-        self.toolBar_2.setObjectName(_fromUtf8("toolBar_2"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar_2)
+        self.statusBar = QtGui.QStatusBar(MainWindow)
+        self.statusBar.setStatusTip(_fromUtf8(""))
+        self.statusBar.setObjectName(_fromUtf8("statusBar"))
+        self.statusBar.showMessage("(ready)")        
+        MainWindow.setStatusBar(self.statusBar)
         self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
+        QtCore.QObject.connect(self.Exit, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -96,5 +98,4 @@ class Ui_MainWindow(object):
         item = self.PacketTable.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "Info", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.toolBar_2.setWindowTitle(_translate("MainWindow", "toolBar_2", None))
 
