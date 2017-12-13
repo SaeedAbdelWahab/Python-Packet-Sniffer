@@ -77,7 +77,21 @@ def parse_packet(packet) :
 def statueStop():
     sniffing = False
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
-   
+    
+def FilterFn():
+    global Row
+    word=ui_main.FilterText.toPlainText()
+    try:
+
+        for i in range(Row):
+            test=ui_main.PacketTable.topLevelItem(i)
+            if (word!=test.text(0) and word!=test.text(1) and word!=test.text(2) and word!=test.text(3) and word!=test.text(4)  ):
+                ui_main.PacketTable.takeTopLevelItem(i)
+                Row-=1
+                i=-1
+    except:
+        FilterFn()
+    #msgBox.warning(ui_home.widget, "Alarm", word)
 
 
 sniffing = False
@@ -97,5 +111,6 @@ ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(de
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
 ui_main.StartButton.clicked.connect(statueStart)
 ui_main.StopSniffing.clicked.connect(statueStop)
+ui_main.FilterBtn.clicked.connect(FilterFn)
 HomeWindow.show()
 sys.exit(app.exec_())
