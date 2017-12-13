@@ -15,7 +15,7 @@ def fetch_packets(packet):
     return 'Packet #{}: {} ==> {}'.format(counter, packet[0][1].src, packet[0][1].dst)
 
 ## Setup sniff, filtering for IP traffic
-#count = 10 is used for testing
+#count = 10 is used for testing 
 pkts = sniff(filter="udp", prn=fetch_packets, count=10)
 
 #code is tested with different filters
@@ -63,7 +63,6 @@ def MacPacketSrc(pkts):
         yield
     print( 'DestSrcAddress: {}'.format(packet[0][1].src) )
 
-MacSrc = sniff(filter='udp',prn= MacPacketSrc, count=10)
 
 ##Function Returning Mac Dest Address
 def MacPacketDest(pkts):    
@@ -72,4 +71,13 @@ def MacPacketDest(pkts):
         yield
     print( 'DestMacAddress: {}'.format(packet[0][1].dst) )
 
-MacDst = sniff(filter='udp',prn= MacPacketDest, count=10)
+
+
+##Show Middle Window:
+def showMiddle():
+    pkts.summary()
+    MacSrc = sniff(filter='udp',prn= MacPacketSrc, count=10)
+    MacDst = sniff(filter='udp',prn= MacPacketDest, count=10)
+
+
+showMiddle()
