@@ -22,15 +22,16 @@ class getPacketsThread(QThread) :
 
     def _get_top_packet(self) :
         (header,packet) = cap.next()
-        protocol,src_mac,dest_mac = parse_packet(packet)
-        param = [protocol,src_mac,dest_mac]
+        param = parse_packet(packet)
         return param
 
     def run(self) :
            for i in range(1000) :
                 param = self._get_top_packet()
-                params_str = ' '.join(param)
-                self.emit(SIGNAL('add_packet(QString)'),params_str)
+                if param : 
+                    param = param[0:-1]
+                    params_str = ' '.join(param)
+                    self.emit(SIGNAL('add_packet(QString)'),params_str)
                 
 
 
@@ -86,32 +87,121 @@ def eth_addr (a) :
     b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(a[0]) , ord(a[1]) , ord(a[2]), ord(a[3]), ord(a[4]) , ord(a[5]))
     return b
 
+# def parse_packet(packet) :
+#     eth_length = 14
+#     global Row
+#     eth_header = packet[:eth_length]
+#     eth = unpack('!6s6sH' , eth_header)
+#     eth_protocol = socket.ntohs(eth[2])
+#     param = [str(eth_protocol),eth_addr(packet[0:6]),eth_addr(packet[6:12])]
+#     if eth_protocol == 8 : 
+#         return param 
 def parse_packet(packet) :
+    param = []
     eth_length = 14
-    global Row
     eth_header = packet[:eth_length]
     eth = unpack('!6s6sH' , eth_header)
     eth_protocol = socket.ntohs(eth[2])
-    return str(eth_protocol),eth_addr(packet[0:6]),eth_addr(packet[6:12])
-    #rowPosition = ui_main.PacketTable.rowCount()
-    #ui_main.PacketTable.insertRow(rowPosition)
-    #ui_main.PacketTable.setItem(rowPosition,0,QtGui.QTableWidgetItem(str(eth_protocol)))
-    #ui_main.PacketTable.setItem(rowPosition , 1, QtGui.QTableWidgetItem(eth_addr(packet[0:6])))
-    #ui_main.PacketTable.setItem(rowPosition , 2, QtGui.QTableWidgetItem(eth_addr(packet[6:12])))
+
+    if eth_protocol == 8 : #IPV4 
+
+        param.append(str(eth_protocol)) # no of the protocol of ethernet
+        param.append(eth_addr(packet[0:6])) # Destination MAC
+        param.append(eth_addr(packet[6:12])) #Source MAC
+
+        ip_header = packet[eth_length:20+eth_length] #extract the ip header
+        iph = unpack('!BBHHHBBH4s4s' , ip_header) #unpack it
+        version_ihl = iph[0]
+        version = version_ihl >> 4 #get ip header verion
+        ihl = version_ihl & 0xF
+        iph_length = ihl * 4 #get ip header length
+        ttl = iph[5]  #get the TTL
+        protocol = iph[6]  #get the number of the protocol
+        s_addr = socket.inet_ntoa(iph[8]); #source ip address
+        d_addr = socket.inet_ntoa(iph[9]); #destination ip address
+        param.append(str(s_addr)) #source IP
+        param.append(str(d_addr)) #destination IP
+
+        if protocol == 6 : #TCP Protocol
+
+            param.append("TCP") #TCP Protocol
+
+            t = iph_length + eth_length #keep parsing the packet
+            tcp_header = packet[t:t+20] #the TCP Header
+            tcph = unpack('!HHLLBBHHH' , tcp_header) #unpack it
+            source_port = tcph[0] #source Port
+            dest_port = tcph[1] #Destination Port
+            sequence = tcph[2] #seq
+            acknowledgement = tcph[3] #Ack
+            doff_reserved = tcph[4]
+            tcph_length = doff_reserved >> 4  #TCP Length
+
+            param.append(str(source_port)) #source port
+            param.append(str(dest_port)) #destination port
+            param.append(str(sequence)) #sequence number
+            param.append(str(acknowledgement)) #acknowledgment
+            param.append(str(tcph_length))
+            h_size = eth_length + iph_length + tcph_length * 4 #header length
+            data_size = len(packet) - h_size
+            data = packet[h_size:]
+            if (dest_port == 80 or source_port == 80) :
+                param.append("Http")
+            param.append(data)
+
+            return param
+
+        elif protocol == 1 : #ICMP 
+
+            param.append("ICMP")
+            u = iph_length + eth_length
+            icmph_length = 4
+            icmp_header = packet[u:u+4]
+            icmph = unpack('!BBH' , icmp_header)  
+            icmp_type = icmph[0]
+            code = icmph[1]
+            checksum = icmph[2]
+             
+            param.append(str(icmp_type))
+            param.append(str(code))
+            param.append(str(checksum))
+            param.append(str(icmp_header))
+             
+            h_size = eth_length + iph_length + icmph_length
+            data_size = len(packet) - h_size
+            data = packet[h_size:] 
+
+            param.append(data) 
+
+            return param 
+
+        elif protocol == 17 : #UDP 
+
+            param.append("UDP")
+
+            u = iph_length + eth_length
+            udph_length = 8
+            udp_header = packet[u:u+8]
+            udph = unpack('!HHHH' , udp_header)         
+            source_port = udph[0]
+            dest_port = udph[1]
+            length = udph[2]
+            checksum = udph[3]
+            
+            param.append(str(source_port)) #source port
+            param.append(str(dest_port)) #destination port
+            param.append(str(checksum)) #acknowledgment
+            param.append(str(length)) 
+
+            h_size = eth_length + iph_length + udph_length
+            data_size = len(packet) - h_size
+             
+            data = packet[h_size:]  
+            param.append(data) 
+
+            return param
 
 
-    # item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
-    # ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(eth_protocol), None))
-    # ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", eth_addr(packet[0:6]), None))
-    # ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", eth_addr(packet[6:12]), None))
-    # Row+=1
 
-
-    #self.PacketTable.topLevelItem(rowPosition).setText(3, _translate("MainWindow", "field3", None))
-    #elf.PacketTable.topLevelItem(rowPosition).setText(4, _translate("MainWindow", "field4", None))
-
-    #ui_main.PacketTable.setItem(rowPosition , 3, QtGui.QTableWidgetItem(eth_protocol))
-    #sys.exit(1)
 
     
 def statueStop():
