@@ -14,82 +14,151 @@
    <string>Packets</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Sniffing</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QPushButton" name="StopSniffing">
-       <property name="text">
-        <string>Stop Sniffing</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="StartButton">
-       <property name="text">
-        <string>Start Sniffing</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Exit">
-       <property name="text">
-        <string>Exit</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QTreeWidget" name="PacketTree">
-      <column>
-       <property name="text">
-        <string>Selected Packet Info</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QTableWidget" name="PacketTable">
-      <column>
-       <property name="text">
-        <string>Protocol</string>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Source MAC</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Destination MAC</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Length</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Info</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>40</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="text">
+     <string>filter:</string>
+    </property>
+   </widget>
+   <widget class="QTreeWidget" name="PacketTree">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>351</y>
+      <width>761</width>
+      <height>155</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text">
+      <string>Selected Packet Info</string>
+     </property>
+    </column>
+   </widget>
+   <widget class="QTreeWidget" name="PacketTable">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>44</y>
+      <width>761</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text">
+      <string>Protocol</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Source MAC</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Destinatiin MAC</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Length</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Info</string>
+     </property>
+    </column>
+   </widget>
+   <widget class="QTextEdit" name="FilterText">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>0</y>
+      <width>451</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="FilterBtn">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>0</y>
+      <width>93</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Filter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="StopSniffing">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>512</y>
+      <width>104</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stop Sniffing</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="StartButton">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>512</y>
+      <width>104</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start Sniffing</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Exit">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>510</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Exit</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QToolBar" name="toolBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -99,8 +168,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
    <addaction name="actionAbout_us"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="statusTip">
