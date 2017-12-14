@@ -27,11 +27,12 @@ class getPacketsThread(QThread) :
         return param
 
     def run(self) :
-           for i in range(10) :
+           for i in range(1000) :
                 param = self._get_top_packet()
-                self.emit(SIGNAL('add_packet(QString)'),param[1])
-                self.sleep(1)
+                params_str = ' '.join(param)
+                self.emit(SIGNAL('add_packet(QString)'),params_str)
                 
+
 
 
                 
@@ -63,6 +64,7 @@ def selectTrigger():
 
 def statueStart(packet=None):
     global Row
+    print packet
     ui_main.statusBar.showMessage("Sniffing...")
     sniffing = True
     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
@@ -90,7 +92,7 @@ def parse_packet(packet) :
     eth_header = packet[:eth_length]
     eth = unpack('!6s6sH' , eth_header)
     eth_protocol = socket.ntohs(eth[2])
-    return eth_protocol,eth_addr(packet[0:6]),eth_addr(packet[6:12])
+    return str(eth_protocol),eth_addr(packet[0:6]),eth_addr(packet[6:12])
     #rowPosition = ui_main.PacketTable.rowCount()
     #ui_main.PacketTable.insertRow(rowPosition)
     #ui_main.PacketTable.setItem(rowPosition,0,QtGui.QTableWidgetItem(str(eth_protocol)))
