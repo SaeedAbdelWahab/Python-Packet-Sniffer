@@ -23,6 +23,7 @@ except AttributeError:
 
 #global Variables
 data = ""
+cap=""
 times = ""
 Row = 0
 sniffing = True
@@ -97,9 +98,11 @@ def selectTrigger():
         msgBox.warning(ui_home.widget, "Alarm", "please select your target device to continue...")
     else:
         global SelectedDevice
-        SelectedDevice=ui_home.DeviceList.currentItem().text()
+        global cap
+        SelectedDevice=str(ui_home.DeviceList.currentItem().text())
         HomeWindow.close()
         MainWindow.show()
+        cap = pcapy.open_live( SelectedDevice, 65536 , 1 , 0)
         get_thread.start()
 
 
@@ -272,7 +275,7 @@ def FilterFn():
         FilterFn()
 
 
-cap = pcapy.open_live( "wlp8s0", 65536 , 1 , 0)
+
 app = QtGui.QApplication(sys.argv)
 HomeWindow = QtGui.QMainWindow()
 MainWindow = QtGui.QMainWindow()
