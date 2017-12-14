@@ -12,6 +12,23 @@ import pcapy
 import sys
 import time
 
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+#global Variables
+data = ""
+time = ""
+Row = 0
+sniffing = True
+
+
+
 def hexadump(x, dump=False):
     """ Build a tcpdump like hexadecimal view
     :param x: a Packet
@@ -30,12 +47,11 @@ def hexadump(x, dump=False):
             else:
                 s += "  "
             if j%16 == 7:
-                s += "  "
-        s += " "
+                s += ""
+        s += "  "
         s += sane_color(x[i:i+16])
         i += 16
         s += "\n"
-    # remove trailing \n
     if s.endswith("\n"):
         s = s[:-1]
     if dump:
@@ -44,8 +60,6 @@ def hexadump(x, dump=False):
         print(s)
 
    
-
-
 class getPacketsThread(QThread) :
     def __init__(self,cap) :
         QThread.__init__(self)
@@ -55,37 +69,25 @@ class getPacketsThread(QThread) :
         self.wait()
 
     def _get_top_packet(self) :
+        global time
         (header,packet) = cap.next()
+        time = datetime.datetime.now().time()
+        
         param = parse_packet(packet)
         return param
 
     def run(self) :
-           for i in range(1000) :
-                param = self._get_top_packet()
-                if param : 
-                    data = param[-1]
-                    x = hexadump(data,True)
-                    if x :
-                        print x
-                        param = param[0:-1]
-                    params_str = ' '.join(param)
-                    self.emit(SIGNAL('add_packet(QString)'),params_str)
+        global sniffing
+        global data
+        while (sniffing) :
+            param = self._get_top_packet()
+            if param : 
+                data = param[-1]
+                data = hexadump(data,True)
+                param = param [0:-1]
+                params_str = ' '.join(param)
+                self.emit(SIGNAL('add_packet(QString)'),params_str)
                 
-
-
-
-                
-Row = 0
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
-
-
 
 def selectTrigger():
     if(ui_home.DeviceList.currentRow()==-1):
@@ -101,21 +103,18 @@ def selectTrigger():
 
 def statueStart(packet=None):
     global Row
-    print packet
+    global data
+    packet = str(packet).split()
     ui_main.statusBar.showMessage("Sniffing...")
-    sniffing = True
     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
     ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(packet), None))
     Row+=1
-    
 
-def statueStarts(packet=None):
-    
+def statueResume() :
+    global sniffing
+    sniffing = True 
+    get_thread.start()   
     ui_main.statusBar.showMessage("Sniffing...")
-    sniffing = True
-    
-
-
        
     
 
@@ -125,6 +124,8 @@ def eth_addr (a) :
 
 def parse_packet(packet) :
     param = []
+    length_of_packet = len(packet)
+    param.append(str(length_of_packet)) #packet length
     eth_length = 14
     eth_header = packet[:eth_length]
     eth = unpack('!6s6sH' , eth_header)
@@ -173,8 +174,11 @@ def parse_packet(packet) :
             data = packet[h_size:]
             if (dest_port == 80 or source_port == 80) :
                 param.append("Http")
-            param.append(data)
 
+            if len(data) > 0 :
+                param.append(data) 
+            else :
+                param.append("no data Found in this packet")
             return param
 
         elif protocol == 1 : #ICMP 
@@ -197,7 +201,10 @@ def parse_packet(packet) :
             data_size = len(packet) - h_size
             data = packet[h_size:] 
 
-            param.append(data) 
+            if len(data)>0 :
+                param.append(data) 
+            else :
+                param.append("no data Found in this packet")
 
             return param 
 
@@ -222,16 +229,18 @@ def parse_packet(packet) :
             h_size = eth_length + iph_length + udph_length
             data_size = len(packet) - h_size
              
-            data = packet[h_size:]  
-            param.append(data) 
+            data = packet[h_size:]   
+
+            if len(data) :
+                param.append(data) 
+            else :
+                param.append("no data Found in this packet payload")
 
             return param
 
-
-
-
     
 def statueStop():
+    global sniffing
     sniffing = False
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
     
@@ -239,7 +248,6 @@ def FilterFn():
     global Row
     word=ui_main.FilterText.toPlainText()
     try:
-
         for i in range(Row):
             test=ui_main.PacketTable.topLevelItem(i)
             if (word!=test.text(0) and word!=test.text(1) and word!=test.text(2) and word!=test.text(3) and word!=test.text(4)  ):
@@ -248,10 +256,9 @@ def FilterFn():
                 i=-1
     except:
         FilterFn()
-    #msgBox.warning(ui_home.widget, "Alarm", word)
+
 
 cap = pcapy.open_live( "wlp8s0", 65536 , 1 , 0)
-sniffing = False
 app = QtGui.QApplication(sys.argv)
 HomeWindow = QtGui.QMainWindow()
 MainWindow = QtGui.QMainWindow()
@@ -259,7 +266,6 @@ ui_home = Ui_HomeWindow()
 ui_main = Ui_MainWindow()
 ui_home.setupUi(HomeWindow)
 ui_main.setupUi(MainWindow)
-
 if os.getuid()!=0 :
     msgBox = QtGui.QMessageBox()
     msgBox.warning(ui_home.widget, "not sudo", "please re-execute the app in admin(root) mode...")
@@ -267,15 +273,13 @@ if os.getuid()!=0 :
 devices = findalldevs()                  #list of strings to test addItems() function
 ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
-ui_main.StartButton.clicked.connect(statueStarts)
+ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)
 HomeWindow.show()
 
 get_thread = getPacketsThread(cap)
 MainWindow.connect(get_thread,SIGNAL("add_packet(QString)"),statueStart)
-
-
 
 
 sys.exit(app.exec_())
