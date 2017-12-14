@@ -4,12 +4,46 @@ from Windows.homewin import Ui_HomeWindow
 from Windows.MainWindow import Ui_MainWindow
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QThread,SIGNAL
+from scapy.all import *
 import socket
 from struct import *
 import datetime
 import pcapy
 import sys
 import time
+
+def hexadump(x, dump=False):
+    """ Build a tcpdump like hexadecimal view
+    :param x: a Packet
+    :param dump: define if the result must be printed or returned in a variable
+    :returns: a String only when dump=True
+    """
+    s = ""
+    x = str(x)
+    l = len(x)
+    i = 0
+    while i < l:
+        s += "%04x  " % i
+        for j in xrange(16):
+            if i+j < l:
+                s += "%02X " % ord(x[i+j])
+            else:
+                s += "  "
+            if j%16 == 7:
+                s += "  "
+        s += " "
+        s += sane_color(x[i:i+16])
+        i += 16
+        s += "\n"
+    # remove trailing \n
+    if s.endswith("\n"):
+        s = s[:-1]
+    if dump:
+        return s
+    else:
+        print(s)
+
+   
 
 
 class getPacketsThread(QThread) :
@@ -29,7 +63,11 @@ class getPacketsThread(QThread) :
            for i in range(1000) :
                 param = self._get_top_packet()
                 if param : 
-                    param = param[0:-1]
+                    data = param[-1]
+                    x = hexadump(data,True)
+                    if x :
+                        print x
+                        param = param[0:-1]
                     params_str = ' '.join(param)
                     self.emit(SIGNAL('add_packet(QString)'),params_str)
                 
@@ -38,8 +76,6 @@ class getPacketsThread(QThread) :
 
                 
 Row = 0
-
-
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -87,15 +123,6 @@ def eth_addr (a) :
     b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(a[0]) , ord(a[1]) , ord(a[2]), ord(a[3]), ord(a[4]) , ord(a[5]))
     return b
 
-# def parse_packet(packet) :
-#     eth_length = 14
-#     global Row
-#     eth_header = packet[:eth_length]
-#     eth = unpack('!6s6sH' , eth_header)
-#     eth_protocol = socket.ntohs(eth[2])
-#     param = [str(eth_protocol),eth_addr(packet[0:6]),eth_addr(packet[6:12])]
-#     if eth_protocol == 8 : 
-#         return param 
 def parse_packet(packet) :
     param = []
     eth_length = 14
