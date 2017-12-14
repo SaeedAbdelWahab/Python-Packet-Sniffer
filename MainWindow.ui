@@ -22,7 +22,7 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="0" colspan="2">
+    <item row="6" column="0" colspan="2">
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -44,7 +44,7 @@
       </widget>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="QTreeWidget" name="PacketTree">
       <column>
        <property name="text">
@@ -53,26 +53,26 @@
       </column>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="1" column="0">
      <widget class="QTableWidget" name="PacketTable">
       <column>
        <property name="text">
-        <string>No</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Protocol</string>
        </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Source IP</string>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Protocol</string>
+        <string>Source MAC</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Destination MAC</string>
        </property>
       </column>
       <column>
