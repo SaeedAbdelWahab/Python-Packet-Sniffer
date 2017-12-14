@@ -13,9 +13,11 @@ def FilterBy(fltr):
     filters = ["arp","ipv4","ipv6","tcp","udp","dhcp","http"]
 
     if fltr in filters:
-        filtername = fltr
-        print(fltr)
-        return filtername
+        #filtername = fltr
+        #print(fltr)
+        #return filtername
+        packet= sniff(filter=fltr,  prn= first_window )
+
     else:
         print('Unrecognized filter')
 
