@@ -290,6 +290,8 @@ if os.getuid()!=0 :
 devices = findalldevs()                  #list of strings to test addItems() function
 ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
+ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+ui_main.PacketTable.header().setStretchLastSection(False)
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)
