@@ -3,15 +3,15 @@ import os,sys,pcapy
 from Windows.homewin import Ui_HomeWindow
 from Windows.MainWindow import Ui_MainWindow
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import QThread,SIGNAL
+from scapy.all import *
 import socket
 from struct import *
 import datetime
 import pcapy
 import sys
 import time
-import threading
 
-Row=0
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
@@ -19,6 +19,77 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
+
+#global Variables
+data = ""
+times = ""
+Row = 0
+sniffing = True
+packets= []
+
+
+
+def hexadump(x, dump=False):
+    """ Build a tcpdump like hexadecimal view
+    :param x: a Packet
+    :param dump: define if the result must be printed or returned in a variable
+    :returns: a String only when dump=True
+    """
+    s = ""
+    x = str(x)
+    l = len(x)
+    i = 0
+    while i < l:
+        s += "%04x  " % i
+        for j in xrange(16):
+            if i+j < l:
+                s += "%02X " % ord(x[i+j])
+            else:
+                s += "  "
+            if j%16 == 7:
+                s += ""
+        s += "  "
+        s += sane_color(x[i:i+16])
+        i += 16
+        s += "\n"
+    if s.endswith("\n"):
+        s = s[:-1]
+    if dump:
+        return s
+    else:
+        print(s)
+
+   
+class getPacketsThread(QThread) :
+    def __init__(self,cap) :
+        QThread.__init__(self)
+        self.cap = cap
+
+    def __del__(self) :
+        self.wait()
+
+    def _get_top_packet(self) :
+        global times
+        (header,packet) = cap.next()
+        times = datetime.datetime.now().time()
+        
+        param = parse_packet(packet)
+        return param
+
+    def run(self) :
+        global sniffing
+        global data
+        while (sniffing) :
+            param = self._get_top_packet()
+            if param : 
+                data = param[-1]
+                data = hexadump(data,True)
+                param = param [0:-1]
+                params_str = ' '.join(param)
+                self.emit(SIGNAL('add_packet(QString)'),params_str)
+                time.sleep(0.1)
+                
 
 def selectTrigger():
     if(ui_home.DeviceList.currentRow()==-1):
@@ -29,19 +100,36 @@ def selectTrigger():
         SelectedDevice=ui_home.DeviceList.currentItem().text()
         HomeWindow.close()
         MainWindow.show()
+        get_thread.start()
 
-def statueStart():
+
+def statueStart(packet=None):
+    global Row
+    global data
+    global times
+    packet = str(packet).split()
+    #packet.append(data)
+    #packets.append(packet)
     ui_main.statusBar.showMessage("Sniffing...")
-    sniffing = True
-    cap = pcapy.open_live( str(SelectedDevice), 65536 , 1 , 0)
-    for i in range(10):
-        time.sleep(0.2)
-        (header, packet) = cap.next()
-        t = threading.Thread(target=parse_packet, args = (packet,))
-        t.daemon = True
-        t.start()
-        #t.join()
-        #parse_packet(packet)
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
+    ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+    if len(packet)>12 : 
+        if packet[12] == "Http" :
+            protocol = "Http"
+    else :  
+        protocol = packet[6]
+    ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
+    Row+=1
+
+def statueResume() :
+    global sniffing
+    sniffing = True 
+    get_thread.start()   
+    ui_main.statusBar.showMessage("Sniffing...")
+       
     
 
 def eth_addr (a) :
@@ -49,32 +137,124 @@ def eth_addr (a) :
     return b
 
 def parse_packet(packet) :
+    param = []
+    length_of_packet = len(packet)
+    param.append(str(length_of_packet)) #packet length
     eth_length = 14
-    global Row
     eth_header = packet[:eth_length]
     eth = unpack('!6s6sH' , eth_header)
     eth_protocol = socket.ntohs(eth[2])
-    #rowPosition = ui_main.PacketTable.rowCount()
-    #ui_main.PacketTable.insertRow(rowPosition)
-    #ui_main.PacketTable.setItem(rowPosition,0,QtGui.QTableWidgetItem(str(eth_protocol)))
-    #ui_main.PacketTable.setItem(rowPosition , 1, QtGui.QTableWidgetItem(eth_addr(packet[0:6])))
-    #ui_main.PacketTable.setItem(rowPosition , 2, QtGui.QTableWidgetItem(eth_addr(packet[6:12])))
-    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
-    ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(eth_protocol), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", eth_addr(packet[0:6]), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", eth_addr(packet[6:12]), None))
-    Row+=1
-    #self.PacketTable.topLevelItem(rowPosition).setText(3, _translate("MainWindow", "field3", None))
-    #elf.PacketTable.topLevelItem(rowPosition).setText(4, _translate("MainWindow", "field4", None))
 
-    #ui_main.PacketTable.setItem(rowPosition , 3, QtGui.QTableWidgetItem(eth_protocol))
-    #sys.exit(1)
+    if eth_protocol == 8 : #IPV4 
 
+        param.append(str(eth_protocol)) # no of the protocol of ethernet
+        param.append(eth_addr(packet[0:6])) # Destination MAC
+        param.append(eth_addr(packet[6:12])) #Source MAC
 
+        ip_header = packet[eth_length:20+eth_length] #extract the ip header
+        iph = unpack('!BBHHHBBH4s4s' , ip_header) #unpack it
+        version_ihl = iph[0]
+        version = version_ihl >> 4 #get ip header verion
+        ihl = version_ihl & 0xF
+        iph_length = ihl * 4 #get ip header length
+        ttl = iph[5]  #get the TTL
+        protocol = iph[6]  #get the number of the protocol
+        s_addr = socket.inet_ntoa(iph[8]); #source ip address
+        d_addr = socket.inet_ntoa(iph[9]); #destination ip address
+        param.append(str(s_addr)) #source IP
+        param.append(str(d_addr)) #destination IP
 
+        if protocol == 6 : #TCP Protocol
+
+            param.append("TCP") #TCP Protocol 6
+
+            t = iph_length + eth_length #keep parsing the packet
+            tcp_header = packet[t:t+20] #the TCP Header
+            tcph = unpack('!HHLLBBHHH' , tcp_header) #unpack it
+            source_port = tcph[0] #source Port
+            dest_port = tcph[1] #Destination Port
+            sequence = tcph[2] #seq
+            acknowledgement = tcph[3] #Ack
+            doff_reserved = tcph[4]
+            tcph_length = doff_reserved >> 4  #TCP Length
+
+            param.append(str(source_port)) #source port 7
+            param.append(str(dest_port)) #destination port    8
+            param.append(str(sequence)) #sequence number 9
+            param.append(str(acknowledgement)) #acknowledgment  10
+            param.append(str(tcph_length))  # 11
+            h_size = eth_length + iph_length + tcph_length * 4 #header length
+            data_size = len(packet) - h_size
+            data = packet[h_size:]
+            if (dest_port == 80 or source_port == 80) :
+                param.append("Http") #12
+
+            if len(data) > 0 :
+                param.append(data) 
+            else :
+                param.append("no data Found in this packet")
+            return param
+
+        elif protocol == 1 : #ICMP 
+
+            param.append("ICMP") #6
+            u = iph_length + eth_length
+            icmph_length = 4
+            icmp_header = packet[u:u+4]
+            icmph = unpack('!BBH' , icmp_header)  
+            icmp_type = icmph[0]
+            code = icmph[1]
+            checksum = icmph[2]
+             
+            param.append(str(icmp_type))
+            param.append(str(code))
+            param.append(str(checksum))
+            param.append(str(icmp_header))
+             
+            h_size = eth_length + iph_length + icmph_length
+            data_size = len(packet) - h_size
+            data = packet[h_size:] 
+
+            if len(data)>0 :
+                param.append(data) 
+            else :
+                param.append("no data Found in this packet")
+
+            return param 
+
+        elif protocol == 17 : #UDP 
+
+            param.append("UDP") #6
+
+            u = iph_length + eth_length
+            udph_length = 8
+            udp_header = packet[u:u+8]
+            udph = unpack('!HHHH' , udp_header)         
+            source_port = udph[0]
+            dest_port = udph[1]
+            length = udph[2]
+            checksum = udph[3]
+            
+            param.append(str(source_port)) #source port
+            param.append(str(dest_port)) #destination port
+            param.append(str(checksum)) #acknowledgment
+            param.append(str(length)) 
+
+            h_size = eth_length + iph_length + udph_length
+            data_size = len(packet) - h_size
+             
+            data = packet[h_size:]   
+
+            if len(data) :
+                param.append(data) 
+            else :
+                param.append("no data Found in this packet payload")
+
+            return param
 
     
 def statueStop():
+    global sniffing
     sniffing = False
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
     
@@ -82,7 +262,6 @@ def FilterFn():
     global Row
     word=ui_main.FilterText.toPlainText()
     try:
-
         for i in range(Row):
             test=ui_main.PacketTable.topLevelItem(i)
             if (word!=test.text(0) and word!=test.text(1) and word!=test.text(2) and word!=test.text(3) and word!=test.text(4)  ):
@@ -91,10 +270,9 @@ def FilterFn():
                 i=-1
     except:
         FilterFn()
-    #msgBox.warning(ui_home.widget, "Alarm", word)
 
 
-sniffing = False
+cap = pcapy.open_live( "wlp8s0", 65536 , 1 , 0)
 app = QtGui.QApplication(sys.argv)
 HomeWindow = QtGui.QMainWindow()
 MainWindow = QtGui.QMainWindow()
@@ -109,8 +287,13 @@ if os.getuid()!=0 :
 devices = findalldevs()                  #list of strings to test addItems() function
 ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
-ui_main.StartButton.clicked.connect(statueStart)
+ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)
 HomeWindow.show()
+
+get_thread = getPacketsThread(cap)
+MainWindow.connect(get_thread,SIGNAL("add_packet(QString)"),statueStart)
+
+
 sys.exit(app.exec_())
