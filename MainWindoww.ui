@@ -59,27 +59,32 @@
     </property>
     <column>
      <property name="text">
+      <string>No</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Time</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Source</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Destination</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
       <string>Protocol</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>Source MAC</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Destinatiin MAC</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Length</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Info</string>
+      <string/>
      </property>
     </column>
    </widget>

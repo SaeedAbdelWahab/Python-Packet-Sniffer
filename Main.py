@@ -23,9 +23,10 @@ except AttributeError:
 
 #global Variables
 data = ""
-time = ""
+times = ""
 Row = 0
 sniffing = True
+packets= []
 
 
 
@@ -69,9 +70,9 @@ class getPacketsThread(QThread) :
         self.wait()
 
     def _get_top_packet(self) :
-        global time
+        global times
         (header,packet) = cap.next()
-        time = datetime.datetime.now().time()
+        times = datetime.datetime.now().time()
         
         param = parse_packet(packet)
         return param
@@ -87,6 +88,7 @@ class getPacketsThread(QThread) :
                 param = param [0:-1]
                 params_str = ' '.join(param)
                 self.emit(SIGNAL('add_packet(QString)'),params_str)
+                time.sleep(0.1)
                 
 
 def selectTrigger():
@@ -104,10 +106,22 @@ def selectTrigger():
 def statueStart(packet=None):
     global Row
     global data
+    global times
     packet = str(packet).split()
+    #packet.append(data)
+    #packets.append(packet)
     ui_main.statusBar.showMessage("Sniffing...")
     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
-    ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(packet), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+    if len(packet)>12 : 
+        if packet[12] == "Http" :
+            protocol = "Http"
+    else :  
+        protocol = packet[6]
+    ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
     Row+=1
 
 def statueResume() :
@@ -152,7 +166,7 @@ def parse_packet(packet) :
 
         if protocol == 6 : #TCP Protocol
 
-            param.append("TCP") #TCP Protocol
+            param.append("TCP") #TCP Protocol 6
 
             t = iph_length + eth_length #keep parsing the packet
             tcp_header = packet[t:t+20] #the TCP Header
@@ -164,16 +178,16 @@ def parse_packet(packet) :
             doff_reserved = tcph[4]
             tcph_length = doff_reserved >> 4  #TCP Length
 
-            param.append(str(source_port)) #source port
-            param.append(str(dest_port)) #destination port
-            param.append(str(sequence)) #sequence number
-            param.append(str(acknowledgement)) #acknowledgment
-            param.append(str(tcph_length))
+            param.append(str(source_port)) #source port 7
+            param.append(str(dest_port)) #destination port    8
+            param.append(str(sequence)) #sequence number 9
+            param.append(str(acknowledgement)) #acknowledgment  10
+            param.append(str(tcph_length))  # 11
             h_size = eth_length + iph_length + tcph_length * 4 #header length
             data_size = len(packet) - h_size
             data = packet[h_size:]
             if (dest_port == 80 or source_port == 80) :
-                param.append("Http")
+                param.append("Http") #12
 
             if len(data) > 0 :
                 param.append(data) 
@@ -183,7 +197,7 @@ def parse_packet(packet) :
 
         elif protocol == 1 : #ICMP 
 
-            param.append("ICMP")
+            param.append("ICMP") #6
             u = iph_length + eth_length
             icmph_length = 4
             icmp_header = packet[u:u+4]
@@ -210,7 +224,7 @@ def parse_packet(packet) :
 
         elif protocol == 17 : #UDP 
 
-            param.append("UDP")
+            param.append("UDP") #6
 
             u = iph_length + eth_length
             udph_length = 8
