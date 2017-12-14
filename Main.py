@@ -31,6 +31,7 @@ class getPacketsThread(QThread) :
                 param = self._get_top_packet()
                 self.emit(SIGNAL('add_packet(QString)'),param[1])
                 self.sleep(1)
+                
 
 
                 
