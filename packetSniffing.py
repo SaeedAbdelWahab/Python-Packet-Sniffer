@@ -21,7 +21,8 @@ def FilterBy(fltr):
     else:
         print('Unrecognized filter')
 
-FilterBy('udp')
+#FilterBy('udp')
+
 ## Define our Main Action function
 
 def fetch_packets(packet):
@@ -67,30 +68,11 @@ def PacketDest(pkts):
 
 pDest = sniff(filter='udp',prn= PacketDest, count=10)
 
+#pkts.summary()
 
 ##Middle Window
-##Function Returning Mac Src Address
-def MacPacketSrc(pkts):
-    for packet in pkts:
-        fetch_packets(packet)
-        yield
-    print( 'DestSrcAddress: {}'.format(packet[0][1].src) )
+#index is defined in window1 get from fetching packets
+def second_window(pkts,index):
+	pkts[index].show()
 
-
-##Function Returning Mac Dest Address
-def MacPacketDest(pkts):    
-    for packet in pkts:
-        fetch_packets(packet)
-        yield
-    print( 'DestMacAddress: {}'.format(packet[0][1].dst) )
-
-
-
-##Show Middle Window:
-def showMiddle():
-    pkts.summary()
-    MacSrc = sniff(filter='udp',prn= MacPacketSrc, count=10)
-    MacDst = sniff(filter='udp',prn= MacPacketDest, count=10)
-
-
-showMiddle()
+second_window(packet,1)
