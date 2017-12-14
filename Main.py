@@ -72,9 +72,9 @@ class getPacketsThread(QThread) :
 
     def _get_top_packet(self) :
         global times
+        global packets
         (header,packet) = cap.next()
         times = datetime.datetime.now().time()
-        
         param = parse_packet(packet)
         return param
 
@@ -86,6 +86,9 @@ class getPacketsThread(QThread) :
             if param : 
                 data = param[-1]
                 data = hexadump(data,True)
+                param = param [0:-1]
+                param.append(data)
+                packets.append(param)
                 param = param [0:-1]
                 params_str = ' '.join(param)
                 self.emit(SIGNAL('add_packet(QString)'),params_str)
@@ -106,7 +109,7 @@ def selectTrigger():
         get_thread.start()
 
 
-def statueStart(packet=None):
+def statueStart(packet=""):
     global Row
     global data
     global times
@@ -151,8 +154,8 @@ def parse_packet(packet) :
     if eth_protocol == 8 : #IPV4 
 
         param.append(str(eth_protocol)) # no of the protocol of ethernet
-        param.append(eth_addr(packet[0:6])) # Destination MAC
-        param.append(eth_addr(packet[6:12])) #Source MAC
+        param.append(eth_addr(packet[0:6])) # Destination MAC 2
+        param.append(eth_addr(packet[6:12])) #Source MAC 3
 
         ip_header = packet[eth_length:20+eth_length] #extract the ip header
         iph = unpack('!BBHHHBBH4s4s' , ip_header) #unpack it
@@ -164,8 +167,8 @@ def parse_packet(packet) :
         protocol = iph[6]  #get the number of the protocol
         s_addr = socket.inet_ntoa(iph[8]); #source ip address
         d_addr = socket.inet_ntoa(iph[9]); #destination ip address
-        param.append(str(s_addr)) #source IP
-        param.append(str(d_addr)) #destination IP
+        param.append(str(s_addr)) #source IP 4
+        param.append(str(d_addr)) #destination IP 5
 
         if protocol == 6 : #TCP Protocol
 
@@ -260,6 +263,23 @@ def statueStop():
     global sniffing
     sniffing = False
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
+
+def DisplayPacket() : 
+    global packets
+    SelectedPacket = str(ui_main.PacketTable.currentItem().text(0))
+    print str(packets[int(SelectedPacket)-1][-1])
+    ui_main.listWidget.clear()
+    item = QtGui.QListWidgetItem()
+    item.setText(str(packets[int(SelectedPacket)-1][-1]))
+    ui_main.listWidget.addItem(item)
+    ui_main.PacketTree.clear()
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(0).setText(0, _translate("MainWindow", str("Packet Length : "+str(packets[int(SelectedPacket)-1][0])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(1).setText(0, _translate("MainWindow", str("Destination MAC : "+str(packets[int(SelectedPacket)-1][2])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(2).setText(0, _translate("MainWindow", str("Source MAC : "+str(packets[int(SelectedPacket)-1][3])), None))
+    
     
 def FilterFn():
     global Row
@@ -291,10 +311,11 @@ devices = findalldevs()                  #list of strings to test addItems() fun
 ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
 ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-ui_main.PacketTable.header().setStretchLastSection(False)
+#ui_main.PacketTable.header().setStretchLastSection(False)
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)
+ui_main.DisplayButton.clicked.connect(DisplayPacket)
 HomeWindow.show()
 
 get_thread = getPacketsThread(cap)
