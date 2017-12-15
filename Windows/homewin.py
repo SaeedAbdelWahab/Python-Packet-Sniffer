@@ -28,6 +28,13 @@ class Ui_HomeWindow(object):
     def setupUi(self, HomeWindow):
         HomeWindow.setObjectName(_fromUtf8("HomeWindow"))
         HomeWindow.resize(488, 450)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(HomeWindow.sizePolicy().hasHeightForWidth())
+        HomeWindow.setSizePolicy(sizePolicy)
+        HomeWindow.setMinimumSize(QtCore.QSize(488, 450))
+        HomeWindow.setMaximumSize(QtCore.QSize(488, 450))
         frameGm = HomeWindow.frameGeometry()
         centerPoint = QtGui.QDesktopWidget().availableGeometry().center()
         frameGm.moveCenter(centerPoint)
