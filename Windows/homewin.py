@@ -28,6 +28,10 @@ class Ui_HomeWindow(object):
     def setupUi(self, HomeWindow):
         HomeWindow.setObjectName(_fromUtf8("HomeWindow"))
         HomeWindow.resize(488, 450)
+        frameGm = HomeWindow.frameGeometry()
+        centerPoint = QtGui.QDesktopWidget().availableGeometry().center()
+        frameGm.moveCenter(centerPoint)
+        HomeWindow.move(frameGm.topLeft())
         self.centralwidget = QtGui.QWidget(HomeWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.widget = QtGui.QWidget(self.centralwidget)
