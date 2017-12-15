@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.DisplayButton = QtGui.QPushButton(self.centralwidget)
         self.DisplayButton.setGeometry(QtCore.QRect(420, 570, 99, 27))
+        self.DisplayButton.setVisible(False)
         self.DisplayButton.setObjectName(_fromUtf8("DisplayButton"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.toolBar = QtGui.QToolBar(MainWindow)
@@ -91,6 +92,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.Exit, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.close)
+        QtCore.QObject.connect(self.PacketTable, QtCore.SIGNAL(_fromUtf8("itemClicked(QTreeWidgetItem*,int)")), self.DisplayButton.click)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

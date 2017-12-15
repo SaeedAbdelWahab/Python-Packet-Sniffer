@@ -178,6 +178,9 @@
     <property name="text">
      <string>Display</string>
     </property>
+    <property name="visible">
+   <bool>false</bool>
+</property>
    </widget>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -232,6 +235,22 @@
     <hint type="destinationlabel">
      <x>310</x>
      <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PacketTable</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>DisplayButton</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>390</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>623</y>
     </hint>
    </hints>
   </connection>
