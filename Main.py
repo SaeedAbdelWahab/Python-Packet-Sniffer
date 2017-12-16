@@ -299,8 +299,6 @@ def DisplayPacket() :
         ui_main.PacketTree.topLevelItem(8).setText(0, _translate("MainWindow", str("sequence no. : "+str(packets[int(SelectedPacket)-1][9])), None))
         item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
         ui_main.PacketTree.topLevelItem(9).setText(0, _translate("MainWindow", str("acknowledgment  : "+str(packets[int(SelectedPacket)-1][10])), None))
-    msgBox = QtGui.QMessageBox()
-    msgBox.warning(ui_home.widget, "Alarm", str(packets[int(SelectedPacket)-1]))
     
     
 def FilterFn():
