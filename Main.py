@@ -269,11 +269,8 @@ def statueStop():
 def DisplayPacket() : 
     global packets
     SelectedPacket = str(ui_main.PacketTable.currentItem().text(0))
-    print str(packets[int(SelectedPacket)-1][-1])
-    ui_main.listWidget.clear()
-    item = QtGui.QListWidgetItem()
-    item.setText(str(packets[int(SelectedPacket)-1][-1]))
-    ui_main.listWidget.addItem(item)
+    #print str(packets[int(SelectedPacket)-1][-1])
+    ui_main.plainTextEdit.setPlainText(_translate("MainWindow", str(packets[int(SelectedPacket)-1][-1]), None))
     ui_main.PacketTree.clear()
     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
     ui_main.PacketTree.topLevelItem(0).setText(0, _translate("MainWindow", str("Packet Length : "+str(packets[int(SelectedPacket)-1][0])), None))
@@ -299,9 +296,7 @@ def DisplayPacket() :
         ui_main.PacketTree.topLevelItem(8).setText(0, _translate("MainWindow", str("sequence no. : "+str(packets[int(SelectedPacket)-1][9])), None))
         item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
         ui_main.PacketTree.topLevelItem(9).setText(0, _translate("MainWindow", str("acknowledgment  : "+str(packets[int(SelectedPacket)-1][10])), None))
-    msgBox = QtGui.QMessageBox()
-    msgBox.warning(ui_home.widget, "Alarm", str(packets[int(SelectedPacket)-1]))
-    
+        
     
 def FilterFn():
     global Row
