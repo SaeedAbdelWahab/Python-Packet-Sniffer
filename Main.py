@@ -122,6 +122,8 @@ def statueStart(packet=""):
     ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
     ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
     ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
+    ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
     if len(packet)>12 : 
         if packet[12] == "Http" :
             protocol = "Http"
@@ -279,6 +281,26 @@ def DisplayPacket() :
     ui_main.PacketTree.topLevelItem(1).setText(0, _translate("MainWindow", str("Destination MAC : "+str(packets[int(SelectedPacket)-1][2])), None))
     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
     ui_main.PacketTree.topLevelItem(2).setText(0, _translate("MainWindow", str("Source MAC : "+str(packets[int(SelectedPacket)-1][3])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(3).setText(0, _translate("MainWindow", str("Source IP : "+str(packets[int(SelectedPacket)-1][4])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(4).setText(0, _translate("MainWindow", str("Destination IP : "+str(packets[int(SelectedPacket)-1][5])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(5).setText(0, _translate("MainWindow", str("Protocol : "+str(packets[int(SelectedPacket)-1][6])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(6).setText(0, _translate("MainWindow", str("Source port : "+str(packets[int(SelectedPacket)-1][7])), None))
+    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+    ui_main.PacketTree.topLevelItem(7).setText(0, _translate("MainWindow", str("Destination port : "+str(packets[int(SelectedPacket)-1][8])), None))
+    if str(packets[int(SelectedPacket)-1][6]) == "UDP":
+        item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+        ui_main.PacketTree.topLevelItem(8).setText(0, _translate("MainWindow", str("acknowledgment  : "+str(packets[int(SelectedPacket)-1][9])), None))
+    else:
+        item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+        ui_main.PacketTree.topLevelItem(8).setText(0, _translate("MainWindow", str("sequence no. : "+str(packets[int(SelectedPacket)-1][9])), None))
+        item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTree)
+        ui_main.PacketTree.topLevelItem(9).setText(0, _translate("MainWindow", str("acknowledgment  : "+str(packets[int(SelectedPacket)-1][10])), None))
+    msgBox = QtGui.QMessageBox()
+    msgBox.warning(ui_home.widget, "Alarm", str(packets[int(SelectedPacket)-1]))
     
     
 def FilterFn():

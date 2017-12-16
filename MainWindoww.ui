@@ -102,6 +102,16 @@
     </column>
     <column>
      <property name="text">
+      <string>Length</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Source port</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
       <string/>
      </property>
     </column>
