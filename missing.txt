@@ -1,29 +1,9 @@
-1- zwwd l frame eli fy l nos
+
 
 2- a5r frame t7t by2t3 l data (70 line)
 
-3- awl frame foo2 feh 7eta fadya 3la l 4mal
 
 
-
-#source IP 4
-#destination IP 5
-tcp:
-	#TCP Protocol 6
-	#source port 7
-	#destination port    8
-	#sequence number 9
-	#acknowledgment  10
-	# header length 11
-	#data 13
-
-udp:
-	#udp 6
-	#source port 7
-	#destination port    8
-	#acknowledgment  9
-	#length 10
-	#data 11
 
 
 
