@@ -113,6 +113,8 @@ def statueStart(packet=""):
     global Row
     global data
     global times
+    ui_main.StartButton.setEnabled(False)
+    ui_main.StopSniffing.setEnabled(True)
     packet = str(packet).split()
     #packet.append(data)
     #packets.append(packet)
@@ -134,6 +136,9 @@ def statueStart(packet=""):
 
 def statueResume() :
     global sniffing
+    if sniffing:
+        ui_main.StartButton.setEnabled(False)
+        ui_main.StopSniffing.setEnabled(True)    
     sniffing = True 
     get_thread.start()   
     ui_main.statusBar.showMessage("Sniffing...")
@@ -264,7 +269,10 @@ def parse_packet(packet) :
 def statueStop():
     global sniffing
     sniffing = False
+    ui_main.StartButton.setEnabled(True)
+    ui_main.StopSniffing.setEnabled(False)
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
+    ui_main.StartButton.setText(_translate("MainWindow", "Resume Sniffing", None))
 
 def DisplayPacket() : 
     global packets
