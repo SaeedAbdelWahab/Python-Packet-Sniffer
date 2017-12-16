@@ -25,6 +25,7 @@ except AttributeError:
 data = ""
 cap=""
 times = ""
+word = ""  #filter word
 Row = 0
 sniffing = True
 packets= []
@@ -108,31 +109,59 @@ def selectTrigger():
         cap = pcapy.open_live( SelectedDevice, 65536 , 1 , 0)
         get_thread.start()
 
-
 def statueStart(packet=""):
     global Row
     global data
     global times
+    global word
     ui_main.StartButton.setEnabled(False)
     ui_main.StopSniffing.setEnabled(True)
     packet = str(packet).split()
     #packet.append(data)
     #packets.append(packet)
     ui_main.statusBar.showMessage("Sniffing...")
-    item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
-    ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
-    ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
     if len(packet)>12 : 
-        if packet[12] == "Http" :
-            protocol = "Http"
-    else :  
+            if packet[12] == "Http" :
+                protocol = "Http"
+    else : 
         protocol = packet[6]
-    ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
-    Row+=1
+
+    if (word==packet[4] or word==packet[5] or word==protocol or word==""):
+        item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
+        ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
+        Row+=1
+    else:
+        None
+
+    # if word!="":
+    #     if (word!=packet[4] and word!=packet[5] and word!=protocol ):#and word!=Packet.text(3) and word!=Packet.text(4) and word!=Packet.text(5) and word!=Packet.text(6)  ):
+    #         None
+    #     else:
+    #         item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
+    #         ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
+    #         ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
+    #         ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
+    #         ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+    #         ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
+    #         ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
+    #         ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
+    #         Row+=1
+    # else:
+    #     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
+    #     ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
+    #     ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
+    #     ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
+    #     ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+    #     ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
+    #     ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
+    #     ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
+    #     Row+=1
 
 def statueResume() :
     global sniffing
@@ -308,6 +337,7 @@ def DisplayPacket() :
     
 def FilterFn():
     global Row
+    global word
     word=ui_main.FilterText.toPlainText()
     try:
         for i in range(Row):
