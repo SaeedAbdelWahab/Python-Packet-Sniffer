@@ -304,7 +304,7 @@ def FilterFn():
     try:
         for i in range(Row):
             test=ui_main.PacketTable.topLevelItem(i)
-            if (word!=test.text(0) and word!=test.text(1) and word!=test.text(2) and word!=test.text(3) and word!=test.text(4)  ):
+            if (word!=test.text(0) and word!=test.text(1) and word!=test.text(2) and word!=test.text(3) and word!=test.text(4) and word!=test.text(5) and word!=test.text(6)  ):
                 ui_main.PacketTable.takeTopLevelItem(i)
                 Row-=1
                 i=-1
