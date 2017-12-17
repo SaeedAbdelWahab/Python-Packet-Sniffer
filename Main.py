@@ -31,6 +31,7 @@ sniffing = True
 packets= []
 dumper = ""
 pcap=[]
+captureFromFile=False
 
 
 
@@ -353,8 +354,31 @@ def FilterFn():
                 i=-1
     except:
         FilterFn()
+
+def OpenFile():
+    global data,cap,times,word,Row,sniffing,packets,captureFromFile
+    filename = QtGui.QFileDialog.getOpenFileName(ui_main.centralwidget, "Save file", "", "pcap (*.pcap)")
+    msg = "This pcap file is going to overwrite the current captured data...continue without saving?"
+    reply = QtGui.QMessageBox.question(ui_main.centralwidget, 'overwrite', msg, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+    if reply == QtGui.QMessageBox.No:
+        None
+    else:
+        data = ""
+        cap=""
+        times = ""
+        word = ""  #filter word
+        Row = 0
+        sniffing = True
+        packets= []
+        captureFromFile=True
+        cap = pcapy.open_offline(str(filename))
+        ui_main.PacketTable.clear()
+        ui_main.PacketTree.clear()
+        ui_main.plainTextEdit.clear()
+        get_thread.start()
+
 def SaveFile():
-    filename = QtGui.QFileDialog.getSaveFileName(ui_main.centralwidget, "Save file", "", ".pcap")
+    filename = QtGui.QFileDialog.getSaveFileName(ui_main.centralwidget, "Save file", "", "pcap (*.pcap);;All files (*.*)")
     if str(filename)[-5:]!=".pcap":
         filename=str(filename)+".pcap"
     else:
@@ -363,8 +387,6 @@ def SaveFile():
     for item in pcap:
         (hdr,pkt)=item
         dumper.dump(hdr, pkt)
-    msgBox = QtGui.QMessageBox()
-    msgBox.warning(ui_home.widget, "Alarm", str(filename))
 
 
 
@@ -385,7 +407,7 @@ ui_home.select.clicked.connect(selectTrigger)       #when button (select) is bee
 ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
 #ui_main.PacketTable.header().setStretchLastSection(False)
 QtCore.QObject.connect(ui_main.actionSave, QtCore.SIGNAL(("triggered()")), SaveFile)
-QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), SaveFile)
+QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), OpenFile)
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)
