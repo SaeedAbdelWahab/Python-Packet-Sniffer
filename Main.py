@@ -354,7 +354,8 @@ def FilterFn():
                 i=-1
     except:
         FilterFn()
-def Reselect():
+def Reselect():     #this fn restarts all global vars and clears all containers (trees and txt) to startover live data
+                    #usualy is used after finishing work with pcap file and user wants to capture live data again
     global data,cap,times,word,Row,sniffing,packets,captureFromFile
     data = ""
     cap=""
@@ -371,31 +372,33 @@ def Reselect():
     HomeWindow.show()
     
 
-def OpenFile():
+def OpenFile():     #this fn restarts all global vars and clears all containers (trees and txt) to startover with the pcap file
     global data,cap,times,word,Row,sniffing,packets,captureFromFile
     filename = QtGui.QFileDialog.getOpenFileName(ui_main.centralwidget, "Save file", "", "pcap (*.pcap)")
-    msg = "This pcap file is going to overwrite the current captured data...continue without saving?"
-    reply = QtGui.QMessageBox.question(ui_main.centralwidget, 'overwrite', msg, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-    if reply == QtGui.QMessageBox.No:
-        None
-    else:
-        data = ""
-        cap=""
-        times = ""
-        word = ""  #filter word
-        Row = 0
-        sniffing = True
-        packets= []
-        captureFromFile=True
-        cap = pcapy.open_offline(str(filename))
-        ui_main.PacketTable.clear()
-        ui_main.PacketTree.clear()
-        ui_main.plainTextEdit.clear()
-        get_thread.start()
+    if filename!="":
+
+        msg = "This pcap file is going to overwrite the current captured data...continue without saving?"
+        reply = QtGui.QMessageBox.question(ui_main.centralwidget, 'overwrite', msg, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if reply == QtGui.QMessageBox.No:
+            None
+        else:
+            data = ""
+            cap=""
+            times = ""
+            word = ""  #filter word
+            Row = 0
+            sniffing = True
+            packets= []
+            captureFromFile=True
+            cap = pcapy.open_offline(str(filename))
+            ui_main.PacketTable.clear()
+            ui_main.PacketTree.clear()
+            ui_main.plainTextEdit.clear()
+            get_thread.start()
 
 def SaveFile():
-    filename = QtGui.QFileDialog.getSaveFileName(ui_main.centralwidget, "Save file", "", "pcap (*.pcap);;All files (*.*)")
-    if str(filename)[-5:]!=".pcap":
+    filename = QtGui.QFileDialog.getSaveFileName(ui_main.centralwidget, "Save file", "", "pcap (*.pcap);;All files (*.*)") #opens save file dialog with filter (*.pcap)
+    if str(filename)[-5:]!=".pcap":             #check if user forgot to type the extention and correct that
         filename=str(filename)+".pcap"
     else:
         filename=str(filename)
@@ -422,13 +425,13 @@ ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(de
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
 ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
 #ui_main.PacketTable.header().setStretchLastSection(False)
-QtCore.QObject.connect(ui_main.actionSave, QtCore.SIGNAL(("triggered()")), SaveFile)
-QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), OpenFile)
-QtCore.QObject.connect(ui_main.Reselect, QtCore.SIGNAL(("clicked()")), Reselect)
+QtCore.QObject.connect(ui_main.actionSave, QtCore.SIGNAL(("triggered()")), SaveFile)  #save file trigger (check SaveFile fn)
+QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), OpenFile)  #open file trigger (check OpenFile fn)
+QtCore.QObject.connect(ui_main.Reselect, QtCore.SIGNAL(("clicked()")), Reselect)      #Reselect device btn trigger
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
-ui_main.FilterBtn.clicked.connect(FilterFn)
-ui_main.DisplayButton.clicked.connect(DisplayPacket)
+ui_main.FilterBtn.clicked.connect(FilterFn)          #filter btn trigger
+ui_main.DisplayButton.clicked.connect(DisplayPacket) #display btn have been hidden but still used as signals are sent to id (please don't delete :'D) 
 HomeWindow.show()
 
 get_thread = getPacketsThread(cap)
