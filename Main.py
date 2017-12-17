@@ -354,6 +354,22 @@ def FilterFn():
                 i=-1
     except:
         FilterFn()
+def Reselect():
+    global data,cap,times,word,Row,sniffing,packets,captureFromFile
+    data = ""
+    cap=""
+    times = ""
+    word = ""  #filter word
+    Row = 0
+    sniffing = True
+    packets= []
+    captureFromFile=False
+    ui_main.PacketTable.clear()
+    ui_main.PacketTree.clear()
+    ui_main.plainTextEdit.clear()
+    MainWindow.close()
+    HomeWindow.show()
+    
 
 def OpenFile():
     global data,cap,times,word,Row,sniffing,packets,captureFromFile
@@ -408,6 +424,7 @@ ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
 #ui_main.PacketTable.header().setStretchLastSection(False)
 QtCore.QObject.connect(ui_main.actionSave, QtCore.SIGNAL(("triggered()")), SaveFile)
 QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), OpenFile)
+QtCore.QObject.connect(ui_main.Reselect, QtCore.SIGNAL(("clicked()")), Reselect)
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)

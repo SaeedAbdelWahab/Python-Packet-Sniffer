@@ -228,6 +228,19 @@
      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
     </property>
    </widget>
+   <widget class="QPushButton" name="Reselect">
+    <property name="geometry">
+     <rect>
+      <x>532</x>
+      <y>580</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Re-select device</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="statusTip">
