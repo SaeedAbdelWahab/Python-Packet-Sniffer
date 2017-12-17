@@ -29,6 +29,8 @@ word = ""  #filter word
 Row = 0
 sniffing = True
 packets= []
+dumper = ""
+pcap=[]
 
 
 
@@ -75,6 +77,7 @@ class getPacketsThread(QThread) :
         global times
         global packets
         (header,packet) = cap.next()
+        pcap.append((header,packet))
         times = datetime.datetime.now().time()
         param = parse_packet(packet)
         return param
@@ -302,6 +305,11 @@ def statueStop():
     ui_main.StopSniffing.setEnabled(False)
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
     ui_main.StartButton.setText(_translate("MainWindow", "Resume Sniffing", None))
+    dumper = cap.dump_open('test3.pcap')
+    for item in pcap:
+        (hdr,pkt)=item
+        dumper.dump(hdr, pkt)
+
 
 def DisplayPacket() : 
     global packets
