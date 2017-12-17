@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'homewin.ui'
+# Form implementation generated from reading ui file 'Windows/homewin.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -9,6 +9,7 @@
 from PyQt4 import QtCore, QtGui
 from pcapy import findalldevs
 import os
+
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -39,6 +40,7 @@ class Ui_HomeWindow(object):
         centerPoint = QtGui.QDesktopWidget().availableGeometry().center()
         frameGm.moveCenter(centerPoint)
         HomeWindow.move(frameGm.topLeft())
+
         self.centralwidget = QtGui.QWidget(HomeWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.widget = QtGui.QWidget(self.centralwidget)
@@ -59,40 +61,11 @@ class Ui_HomeWindow(object):
         HomeWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(HomeWindow)
+        QtCore.QObject.connect(self.DeviceList, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QListWidgetItem*)")), self.select.click)
         QtCore.QMetaObject.connectSlotsByName(HomeWindow)
 
     def retranslateUi(self, HomeWindow):
         HomeWindow.setWindowTitle(_translate("HomeWindow", "packet sniffer", None))
         self.select.setText(_translate("HomeWindow", "select", None))
         self.label.setText(_translate("HomeWindow", "please select interface to start sniffing", None))
-        __sortingEnabled = self.DeviceList.isSortingEnabled()
-        self.DeviceList.setSortingEnabled(False)
-        item = self.DeviceList.item(0)
-        self.DeviceList.setSortingEnabled(__sortingEnabled)
-# def selectTrigger():
-#     if(ui.DeviceList.currentRow()==-1):
-#         msgBox = QtGui.QMessageBox()
-#         msgBox.warning(ui.widget, "Alarm", "please select your target device to continue...")
-#     else:
-#         SelectedDevice=ui.DeviceList.currentItem().text()
-#         nmsgBox = QtGui.QMessageBox()
-#         nmsgBox.warning(ui.widget, "SelectedDevice:", SelectedDevice+"          ")
-#         #here we would excute a new pyqt form 
-#         sys.exit() 
-
-# if __name__ == "__main__":
-#     import sys
-#     app = QtGui.QApplication(sys.argv)
-#     HomeWindow = QtGui.QMainWindow()
-#     ui = Ui_HomeWindow()
-#     ui.setupUi(HomeWindow)
-#     if os.getuid()!=0 :
-#         msgBox = QtGui.QMessageBox()
-#         msgBox.warning(ui.widget, "not sudo", "please re-execute the app in admin(root) mode...")
-#         sys.exit()
-#     devices = findalldevs()                  #list of strings to test addItems() function
-#     ui.DeviceList.addItems(devices)                #adds elemnts of the list(devices) to QlistWidget
-#     ui.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
-#     HomeWindow.show()
-#     sys.exit(app.exec_())
 

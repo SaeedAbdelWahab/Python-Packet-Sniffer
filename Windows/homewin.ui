@@ -58,16 +58,28 @@
        <height>251</height>
       </rect>
      </property>
-     <item>
-      <property name="text">
-       <string>test</string>
-      </property>
-     </item>
     </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>DeviceList</sender>
+   <signal>itemDoubleClicked(QListWidgetItem*)</signal>
+   <receiver>select</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>393</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
