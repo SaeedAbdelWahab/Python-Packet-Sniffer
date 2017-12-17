@@ -305,10 +305,7 @@ def statueStop():
     ui_main.StopSniffing.setEnabled(False)
     ui_main.statusBar.showMessage("Sniffing has been stopped.")
     ui_main.StartButton.setText(_translate("MainWindow", "Resume Sniffing", None))
-    dumper = cap.dump_open('test3.pcap')
-    for item in pcap:
-        (hdr,pkt)=item
-        dumper.dump(hdr, pkt)
+    
 
 
 def DisplayPacket() : 
@@ -356,6 +353,18 @@ def FilterFn():
                 i=-1
     except:
         FilterFn()
+def SaveFile():
+    filename = QtGui.QFileDialog.getSaveFileName(ui_main.centralwidget, "Save file", "", ".pcap")
+    if str(filename)[-5:]!=".pcap":
+        filename=str(filename)+".pcap"
+    else:
+        filename=str(filename)
+    dumper = cap.dump_open(filename)
+    for item in pcap:
+        (hdr,pkt)=item
+        dumper.dump(hdr, pkt)
+    msgBox = QtGui.QMessageBox()
+    msgBox.warning(ui_home.widget, "Alarm", str(filename))
 
 
 
@@ -375,6 +384,8 @@ ui_home.DeviceList.addItems(devices)                #adds elemnts of the list(de
 ui_home.select.clicked.connect(selectTrigger)       #when button (select) is been trigger it calls selectTrigger()
 ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
 #ui_main.PacketTable.header().setStretchLastSection(False)
+QtCore.QObject.connect(ui_main.actionSave, QtCore.SIGNAL(("triggered()")), SaveFile)
+QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), SaveFile)
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
 ui_main.FilterBtn.clicked.connect(FilterFn)

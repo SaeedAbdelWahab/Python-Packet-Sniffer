@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindoww.ui'
+# Form implementation generated from reading ui file 'Windows/MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -89,25 +89,31 @@ class Ui_MainWindow(object):
         self.plainTextEdit.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
         self.plainTextEdit.setObjectName(_fromUtf8("plainTextEdit"))
         MainWindow.setCentralWidget(self.centralwidget)
-        self.toolBar = QtGui.QToolBar(MainWindow)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.toolBar.sizePolicy().hasHeightForWidth())
-        self.toolBar.setSizePolicy(sizePolicy)
-        self.toolBar.setObjectName(_fromUtf8("toolBar"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.statusBar = QtGui.QStatusBar(MainWindow)
         self.statusBar.setStatusTip(_fromUtf8(""))
         self.statusBar.setObjectName(_fromUtf8("statusBar"))
         MainWindow.setStatusBar(self.statusBar)
+        self.menuBar = QtGui.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 791, 21))
+        self.menuBar.setObjectName(_fromUtf8("menuBar"))
+        self.menuFile = QtGui.QMenu(self.menuBar)
+        self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuAbout = QtGui.QMenu(self.menuBar)
+        self.menuAbout.setObjectName(_fromUtf8("menuAbout"))
+        MainWindow.setMenuBar(self.menuBar)
         self.actionAbout_us = QtGui.QAction(MainWindow)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("Windows/about.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionAbout_us.setIcon(icon)
         self.actionAbout_us.setObjectName(_fromUtf8("actionAbout_us"))
-        self.toolBar.addAction(self.actionAbout_us)
-        self.toolBar.addSeparator()
+        self.actionOpen = QtGui.QAction(MainWindow)
+        self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
+        self.actionSave = QtGui.QAction(MainWindow)
+        self.actionSave.setObjectName(_fromUtf8("actionSave"))
+        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionSave)
+        self.menuBar.addAction(self.menuFile.menuAction())
+        self.menuBar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.Exit, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.close)
@@ -130,7 +136,12 @@ class Ui_MainWindow(object):
         self.StartButton.setText(_translate("MainWindow", "Start Sniffing", None))
         self.Exit.setText(_translate("MainWindow", "Exit", None))
         self.DisplayButton.setText(_translate("MainWindow", "Display", None))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
+        self.menuFile.setTitle(_translate("MainWindow", "File", None))
+        self.menuAbout.setTitle(_translate("MainWindow", "about", None))
         self.actionAbout_us.setText(_translate("MainWindow", "about us", None))
         self.actionAbout_us.setToolTip(_translate("MainWindow", "<html><head/><body><p>about us</p></body></html>", None))
+        self.actionOpen.setText(_translate("MainWindow", "open", None))
+        self.actionOpen.setToolTip(_translate("MainWindow", "open pcap file", None))
+        self.actionSave.setText(_translate("MainWindow", "save", None))
+        self.actionSave.setToolTip(_translate("MainWindow", "save pcap file", None))
 
