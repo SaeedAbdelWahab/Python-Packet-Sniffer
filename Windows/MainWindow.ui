@@ -267,6 +267,7 @@
     <property name="title">
      <string>about</string>
     </property>
+    <addaction name="actionAbout_us_2"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAbout"/>
@@ -297,6 +298,11 @@
    </property>
    <property name="toolTip">
     <string>save pcap file</string>
+   </property>
+  </action>
+  <action name="actionAbout_us_2">
+   <property name="text">
+    <string>about us</string>
    </property>
   </action>
  </widget>

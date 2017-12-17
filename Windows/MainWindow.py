@@ -113,8 +113,11 @@ class Ui_MainWindow(object):
         self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
         self.actionSave = QtGui.QAction(MainWindow)
         self.actionSave.setObjectName(_fromUtf8("actionSave"))
+        self.actionAbout_us_2 = QtGui.QAction(MainWindow)
+        self.actionAbout_us_2.setObjectName(_fromUtf8("actionAbout_us_2"))
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
+        self.menuAbout.addAction(self.actionAbout_us_2)
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuAbout.menuAction())
 
@@ -148,4 +151,5 @@ class Ui_MainWindow(object):
         self.actionOpen.setToolTip(_translate("MainWindow", "open pcap file", None))
         self.actionSave.setText(_translate("MainWindow", "save", None))
         self.actionSave.setToolTip(_translate("MainWindow", "save pcap file", None))
+        self.actionAbout_us_2.setText(_translate("MainWindow", "about us", None))
 

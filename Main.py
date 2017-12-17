@@ -407,7 +407,9 @@ def SaveFile():
         (hdr,pkt)=item
         dumper.dump(hdr, pkt)
 
-
+def about_us():
+    msgBox = QtGui.QMessageBox()
+    msgBox.warning(ui_home.widget, "Who we are?!", "we are the amazing developers:\n Saeed abd el wahab,\n Sherif abood,\n Salma Ahmed,\n silvana maher")
 
 app = QtGui.QApplication(sys.argv)
 HomeWindow = QtGui.QMainWindow()
@@ -427,6 +429,7 @@ ui_main.PacketTable.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
 #ui_main.PacketTable.header().setStretchLastSection(False)
 QtCore.QObject.connect(ui_main.actionSave, QtCore.SIGNAL(("triggered()")), SaveFile)  #save file trigger (check SaveFile fn)
 QtCore.QObject.connect(ui_main.actionOpen, QtCore.SIGNAL(("triggered()")), OpenFile)  #open file trigger (check OpenFile fn)
+QtCore.QObject.connect(ui_main.actionAbout_us_2, QtCore.SIGNAL(("triggered()")), about_us)  
 QtCore.QObject.connect(ui_main.Reselect, QtCore.SIGNAL(("clicked()")), Reselect)      #Reselect device btn trigger
 ui_main.StartButton.clicked.connect(statueResume)
 ui_main.StopSniffing.clicked.connect(statueStop)
