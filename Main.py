@@ -80,8 +80,12 @@ class getPacketsThread(QThread) :
         (header,packet) = cap.next()
         pcap.append((header,packet))
         times = datetime.datetime.now().time()
-        param = parse_packet(packet)
-        return param
+        try:
+            param = parse_packet(packet)
+            return param
+        except:
+            self.emit(SIGNAL('finish'))
+            return
 
     def run(self) :
         global sniffing
@@ -99,7 +103,13 @@ class getPacketsThread(QThread) :
                 self.emit(SIGNAL('add_packet(QString)'),params_str)
                 time.sleep(0.1)
                 
-
+def FileLoadFinish():
+    global sniffing
+    sniffing=False
+    ui_main.StartButton.setEnabled(False)
+    ui_main.StopSniffing.setEnabled(False)
+    ui_main.statusBar.showMessage("Pcap file has been loaded succecfully...")
+    
 def selectTrigger():
     if(ui_home.DeviceList.currentRow()==-1):
         msgBox = QtGui.QMessageBox()
@@ -142,30 +152,6 @@ def statueStart(packet=""):
         Row+=1
     else:
         None
-
-    # if word!="":
-    #     if (word!=packet[4] and word!=packet[5] and word!=protocol ):#and word!=Packet.text(3) and word!=Packet.text(4) and word!=Packet.text(5) and word!=Packet.text(6)  ):
-    #         None
-    #     else:
-    #         item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
-    #         ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
-    #         ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
-    #         ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
-    #         ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
-    #         ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
-    #         ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
-    #         ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
-    #         Row+=1
-    # else:
-    #     item_0 = QtGui.QTreeWidgetItem(ui_main.PacketTable)
-    #     ui_main.PacketTable.topLevelItem(Row).setText(0, _translate("MainWindow", str(Row+1), None))
-    #     ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
-    #     ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
-    #     ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
-    #     ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
-    #     ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
-    #     ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
-    #     Row+=1
 
 def statueResume() :
     global sniffing
@@ -395,6 +381,7 @@ def OpenFile():     #this fn restarts all global vars and clears all containers 
             ui_main.PacketTree.clear()
             ui_main.plainTextEdit.clear()
             get_thread.start()
+            
 
 def SaveFile():
     filename = QtGui.QFileDialog.getSaveFileName(ui_main.centralwidget, "Save file", "", "pcap (*.pcap);;All files (*.*)") #opens save file dialog with filter (*.pcap)
@@ -439,6 +426,7 @@ HomeWindow.show()
 
 get_thread = getPacketsThread(cap)
 MainWindow.connect(get_thread,SIGNAL("add_packet(QString)"),statueStart)
+MainWindow.connect(get_thread,SIGNAL("finish"),FileLoadFinish)
 
 
 sys.exit(app.exec_())
