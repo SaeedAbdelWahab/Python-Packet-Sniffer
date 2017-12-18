@@ -1,2 +1,0 @@
-1-fix bug of last packet capturing from pcap file
-2-edit "about" dialog to be more elegant
