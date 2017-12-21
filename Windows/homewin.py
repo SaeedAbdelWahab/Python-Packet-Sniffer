@@ -67,5 +67,5 @@ class Ui_HomeWindow(object):
     def retranslateUi(self, HomeWindow):
         HomeWindow.setWindowTitle(_translate("HomeWindow", "packet sniffer", None))
         self.select.setText(_translate("HomeWindow", "select", None))
-        self.label.setText(_translate("HomeWindow", "please select interface to start sniffing", None))
+        self.label.setText(_translate("HomeWindow", "Please select an interface to start sniffing", None))
 
