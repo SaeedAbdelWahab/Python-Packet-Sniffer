@@ -137,6 +137,7 @@ class Ui_MainWindow(object):
         self.PacketTable.headerItem().setText(4, _translate("MainWindow", "Protocol", None))
         self.PacketTable.headerItem().setText(5, _translate("MainWindow", "Length", None))
         self.PacketTable.headerItem().setText(6, _translate("MainWindow", "Source port", None))
+        self.PacketTable.headerItem().setText(7, _translate("MainWindow", "Destination port", None))
         self.FilterBtn.setText(_translate("MainWindow", "Filter", None))
         self.StopSniffing.setText(_translate("MainWindow", "Stop Sniffing", None))
         self.StartButton.setText(_translate("MainWindow", "Start Sniffing", None))

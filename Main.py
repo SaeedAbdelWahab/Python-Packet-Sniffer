@@ -146,6 +146,7 @@ def statueStart(packet=""):
         ui_main.PacketTable.topLevelItem(Row).setText(1, _translate("MainWindow", str(times), None))
         ui_main.PacketTable.topLevelItem(Row).setText(2, _translate("MainWindow", str(packet[4]), None))
         ui_main.PacketTable.topLevelItem(Row).setText(3, _translate("MainWindow", str(packet[5]), None))
+        ui_main.PacketTable.topLevelItem(Row).setText(7, _translate("MainWindow", str(packet[8]), None))
         ui_main.PacketTable.topLevelItem(Row).setText(5, _translate("MainWindow", str(packets[Row][0]), None))
         ui_main.PacketTable.topLevelItem(Row).setText(6, _translate("MainWindow", str(packets[Row][7]), None))
         ui_main.PacketTable.topLevelItem(Row).setText(4, _translate("MainWindow", protocol, None))    
